@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Order.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Order Management System - Sprint 1</a> &gt; <a href="index.source.html" class="el_package">com.tecmx.ordermanagement.model</a> &gt; <span class="el_source">Order.java</span></div><h1>Order.java</h1><pre class="source lang-java linenums">package com.tecmx.ordermanagement.model;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tecmx.ordermanagement.exception.BusinessRuleException;
+
+/**
+ * Represents a purchase order.
+ */
+public class Order {
+
+<span class="fc" id="L17">    private static final Logger logger = LoggerFactory.getLogger(Order.class);</span>
+
+<span class="fc" id="L19">    public enum Status {</span>
+<span class="fc" id="L20">        CREATED, CONFIRMED, SHIPPED, DELIVERED, CANCELLED</span>
+    }
+
+    private String id;
+    private String customerId;
+    private List&lt;OrderItem&gt; items;
+    private Status status;
+    private LocalDateTime createdAt;
+
+<span class="fc" id="L29">    public Order() {</span>
+<span class="fc" id="L30">        this.items = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L31">        this.status = Status.CREATED;</span>
+<span class="fc" id="L32">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L33">    }</span>
+
+    public Order(String id, String customerId) {
+<span class="fc" id="L36">        this();</span>
+<span class="fc" id="L37">        this.id = id;</span>
+<span class="fc" id="L38">        this.customerId = customerId;</span>
+<span class="fc" id="L39">    }</span>
+
+    public String getId() {
+<span class="fc" id="L42">        return id;</span>
+    }
+
+    public void setId(String id) {
+<span class="nc" id="L46">        this.id = id;</span>
+<span class="nc" id="L47">    }</span>
+
+    public String getCustomerId() {
+<span class="fc" id="L50">        return customerId;</span>
+    }
+
+    public void setCustomerId(String customerId) {
+<span class="nc" id="L54">        this.customerId = customerId;</span>
+<span class="nc" id="L55">    }</span>
+
+    public List&lt;OrderItem&gt; getItems() {
+<span class="fc" id="L58">        return items;</span>
+    }
+
+    public void setItems(List&lt;OrderItem&gt; items) {
+<span class="nc" id="L62">        this.items = items;</span>
+<span class="nc" id="L63">    }</span>
+
+    public Status getStatus() {
+<span class="fc" id="L66">        return status;</span>
+    }
+
+    public void setStatus(Status status) {
+<span class="fc" id="L70">        this.status = status;</span>
+<span class="fc" id="L71">    }</span>
+
+    public LocalDateTime getCreatedAt() {
+<span class="fc" id="L74">        return createdAt;</span>
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+<span class="nc" id="L78">        this.createdAt = createdAt;</span>
+<span class="nc" id="L79">    }</span>
+
+    public void addItem(OrderItem item) {
+<span class="fc" id="L82">        this.items.add(item);</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Calculates the total cost of the order.
+     */
+    public double getTotal() {
+
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">        if (items == null || items.isEmpty()) {</span>
+<span class="fc" id="L91">            throw new BusinessRuleException(&quot;Cannot calculate total for an order with no items&quot;);</span>
+        }
+
+<span class="fc" id="L94">        double total = 0.0;</span>
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (OrderItem item : items) {</span>
+<span class="fc" id="L97">            total += item.getSubtotal();</span>
+        }
+
+<span class="fc" id="L100">        logger.info(&quot;Calculated total for order {}: {}&quot;, id, total);</span>
+
+<span class="fc" id="L102">        return total;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L107">        return &quot;Order{id='&quot; + id + &quot;', customerId='&quot; + customerId + &quot;', status=&quot; + status</span>
+<span class="nc" id="L108">                + &quot;, items=&quot; + items.size() + &quot;, createdAt=&quot; + createdAt + &quot;}&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

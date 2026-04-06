@@ -3,6 +3,8 @@ package com.tecmx.ordermanagement.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tecmx.ordermanagement.exception.ResourceNotFoundException;
+import com.tecmx.ordermanagement.exception.ValidationException;
 import com.tecmx.ordermanagement.model.Product;
 import com.tecmx.ordermanagement.repository.OrderRepository;
 
@@ -23,43 +25,70 @@ public class InventoryService {
 
     /**
      * Registers a new product in the inventory.
-     *
-     * TODO: 1. Validate that id is not null or empty → ValidationException. 2.
-     * Validate that name is not null or empty → ValidationException. 3.
-     * Validate that price > 0 → ValidationException. 4. Validate that
-     * stockQuantity >= 0 → ValidationException. 5. Create the product, save it
-     * in the repository. 6. Log at INFO level: "Product registered: {id} -
-     * {name} (stock: {qty}, price: {price})". 7. Return the created product.
      */
     public Product registerProduct(String id, String name, double price, int stockQuantity) {
-        // TODO: Implement
-        return null;
+
+        if (id == null || id.isBlank()) {
+            throw new ValidationException("Product id cannot be null or empty", "id");
+        }
+
+        if (name == null || name.isBlank()) {
+            throw new ValidationException("Product name cannot be null or empty", "name");
+        }
+
+        if (price <= 0) {
+            throw new ValidationException("Product price must be greater than zero", "price");
+        }
+
+        if (stockQuantity < 0) {
+            throw new ValidationException("Stock quantity cannot be negative", "stockQuantity");
+        }
+
+        Product product = new Product(id, name, price, stockQuantity);
+
+        orderRepository.saveProduct(product);
+
+        logger.info("Product registered: {} - {} (stock: {}, price: {})",
+                id, name, stockQuantity, price);
+
+        return product;
     }
 
     /**
      * Updates the stock of an existing product.
-     *
-     * TODO: 1. Find the product → if not found, throw
-     * ResourceNotFoundException. 2. Validate that additionalStock > 0 →
-     * ValidationException. 3. Add additionalStock to the current stock. 4. Save
-     * the updated product. 5. Log at INFO level: "Stock updated for
-     * {productId}: +{additionalStock} → new stock: {newTotal}". 6. Return the
-     * updated product.
      */
     public Product restockProduct(String productId, int additionalStock) {
-        // TODO: Implement
-        return null;
+
+        Product product = orderRepository.findProductById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found", productId));
+
+        if (additionalStock <= 0) {
+            throw new ValidationException("Additional stock must be greater than zero", "additionalStock");
+        }
+
+        int newTotal = product.getStockQuantity() + additionalStock;
+        product.setStockQuantity(newTotal);
+
+        orderRepository.saveProduct(product);
+
+        logger.info("Stock updated for {}: +{} → new stock: {}",
+                productId, additionalStock, newTotal);
+
+        return product;
     }
 
     /**
      * Checks the current stock of a product.
-     *
-     * TODO: 1. Find the product → if not found, throw
-     * ResourceNotFoundException. 2. Log at DEBUG level: "Stock check for
-     * {productId}: {currentStock}". 3. Return the stock quantity.
      */
     public int checkStock(String productId) {
-        // TODO: Implement
-        return 0;
+
+        Product product = orderRepository.findProductById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found", productId));
+
+        int currentStock = product.getStockQuantity();
+
+        logger.debug("Stock check for {}: {}", productId, currentStock);
+
+        return currentStock;
     }
 }

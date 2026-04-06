@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InventoryService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Order Management System - Sprint 1</a> &gt; <a href="index.source.html" class="el_package">com.tecmx.ordermanagement.service</a> &gt; <span class="el_source">InventoryService.java</span></div><h1>InventoryService.java</h1><pre class="source lang-java linenums">package com.tecmx.ordermanagement.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tecmx.ordermanagement.exception.ResourceNotFoundException;
+import com.tecmx.ordermanagement.exception.ValidationException;
+import com.tecmx.ordermanagement.model.Product;
+import com.tecmx.ordermanagement.repository.OrderRepository;
+
+/**
+ * Inventory/product management service.
+ *
+ * Students must complete the implementation.
+ */
+public class InventoryService {
+
+<span class="fc" id="L18">    private static final Logger logger = LoggerFactory.getLogger(InventoryService.class);</span>
+
+    private final OrderRepository orderRepository;
+
+<span class="fc" id="L22">    public InventoryService(OrderRepository orderRepository) {</span>
+<span class="fc" id="L23">        this.orderRepository = orderRepository;</span>
+<span class="fc" id="L24">    }</span>
+
+    /**
+     * Registers a new product in the inventory.
+     */
+    public Product registerProduct(String id, String name, double price, int stockQuantity) {
+
+<span class="fc bfc" id="L31" title="All 4 branches covered.">        if (id == null || id.isBlank()) {</span>
+<span class="fc" id="L32">            throw new ValidationException(&quot;Product id cannot be null or empty&quot;, &quot;id&quot;);</span>
+        }
+
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">        if (name == null || name.isBlank()) {</span>
+<span class="fc" id="L36">            throw new ValidationException(&quot;Product name cannot be null or empty&quot;, &quot;name&quot;);</span>
+        }
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (price &lt;= 0) {</span>
+<span class="fc" id="L40">            throw new ValidationException(&quot;Product price must be greater than zero&quot;, &quot;price&quot;);</span>
+        }
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (stockQuantity &lt; 0) {</span>
+<span class="fc" id="L44">            throw new ValidationException(&quot;Stock quantity cannot be negative&quot;, &quot;stockQuantity&quot;);</span>
+        }
+
+<span class="fc" id="L47">        Product product = new Product(id, name, price, stockQuantity);</span>
+
+<span class="fc" id="L49">        orderRepository.saveProduct(product);</span>
+
+<span class="fc" id="L51">        logger.info(&quot;Product registered: {} - {} (stock: {}, price: {})&quot;,</span>
+<span class="fc" id="L52">                id, name, stockQuantity, price);</span>
+
+<span class="fc" id="L54">        return product;</span>
+    }
+
+    /**
+     * Updates the stock of an existing product.
+     */
+    public Product restockProduct(String productId, int additionalStock) {
+
+<span class="fc" id="L62">        Product product = orderRepository.findProductById(productId)</span>
+<span class="fc" id="L63">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Product not found&quot;, productId));</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (additionalStock &lt;= 0) {</span>
+<span class="fc" id="L66">            throw new ValidationException(&quot;Additional stock must be greater than zero&quot;, &quot;additionalStock&quot;);</span>
+        }
+
+<span class="fc" id="L69">        int newTotal = product.getStockQuantity() + additionalStock;</span>
+<span class="fc" id="L70">        product.setStockQuantity(newTotal);</span>
+
+<span class="fc" id="L72">        orderRepository.saveProduct(product);</span>
+
+<span class="fc" id="L74">        logger.info(&quot;Stock updated for {}: +{} → new stock: {}&quot;,</span>
+<span class="fc" id="L75">                productId, additionalStock, newTotal);</span>
+
+<span class="fc" id="L77">        return product;</span>
+    }
+
+    /**
+     * Checks the current stock of a product.
+     */
+    public int checkStock(String productId) {
+
+<span class="fc" id="L85">        Product product = orderRepository.findProductById(productId)</span>
+<span class="fc" id="L86">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Product not found&quot;, productId));</span>
+
+<span class="fc" id="L88">        int currentStock = product.getStockQuantity();</span>
+
+<span class="fc" id="L90">        logger.debug(&quot;Stock check for {}: {}&quot;, productId, currentStock);</span>
+
+<span class="fc" id="L92">        return currentStock;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

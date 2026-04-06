@@ -33,39 +33,59 @@ class ExceptionTests {
     @Test
     @DisplayName("ResourceNotFoundException should be an instance of OrderManagementException")
     void resourceNotFoundShouldExtendBase() {
-        // TODO: After fixing the inheritance, this test should pass.
-        //       Create a ResourceNotFoundException and verify with instanceof
-        //       that it is an OrderManagementException.
+        ResourceNotFoundException ex =
+                new ResourceNotFoundException("Order not found", "ORD-1");
+
+        assertTrue(ex instanceof OrderManagementException);
     }
 
     @Test
     @DisplayName("ResourceNotFoundException should have errorCode RESOURCE_NOT_FOUND")
     void resourceNotFoundShouldHaveCorrectErrorCode() {
-        // TODO: Implement - Verify the errorCode.
+        ResourceNotFoundException ex =
+                new ResourceNotFoundException("Order not found", "ORD-1");
+
+        assertEquals("RESOURCE_NOT_FOUND", ex.getErrorCode());
+        assertEquals("ORD-1", ex.getResourceId());
     }
 
     @Test
     @DisplayName("ValidationException should be an instance of OrderManagementException")
     void validationExceptionShouldExtendBase() {
-        // TODO: Implement
+        ValidationException ex =
+                new ValidationException("Invalid field");
+
+        assertTrue(ex instanceof OrderManagementException);
     }
 
     @Test
     @DisplayName("ValidationException should store the fieldName")
     void validationExceptionShouldStoreFieldName() {
-        // TODO: Implement - Create with the constructor that takes fieldName,
-        //       verify with getFieldName().
+        ValidationException ex =
+                new ValidationException("Invalid value", "price");
+
+        assertEquals("price", ex.getFieldName());
+        assertEquals("VALIDATION_ERROR", ex.getErrorCode());
     }
 
     @Test
     @DisplayName("BusinessRuleException should be an instance of OrderManagementException")
     void businessRuleShouldExtendBase() {
-        // TODO: Implement
+        BusinessRuleException ex =
+                new BusinessRuleException("Rule violated");
+
+        assertTrue(ex instanceof OrderManagementException);
     }
 
     @Test
     @DisplayName("BusinessRuleException should support constructor with cause")
     void businessRuleShouldSupportCause() {
-        // TODO: Implement
+        RuntimeException cause = new RuntimeException("root cause");
+
+        BusinessRuleException ex =
+                new BusinessRuleException("Rule violated", cause);
+
+        assertEquals(cause, ex.getCause());
+        assertEquals("BUSINESS_RULE_VIOLATION", ex.getErrorCode());
     }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Order Management System - Sprint 1</a> &gt; <a href="index.source.html" class="el_package">com.tecmx.ordermanagement.model</a> &gt; <span class="el_source">OrderItem.java</span></div><h1>OrderItem.java</h1><pre class="source lang-java linenums">package com.tecmx.ordermanagement.model;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tecmx.ordermanagement.exception.ValidationException;
+
+/**
+ * Represents a line item within an order.
+ */
+public class OrderItem {
+
+<span class="fc" id="L13">    private static final Logger logger = LoggerFactory.getLogger(OrderItem.class);</span>
+
+    private Product product;
+    private int quantity;
+
+<span class="nc" id="L18">    public OrderItem() {</span>
+<span class="nc" id="L19">    }</span>
+
+<span class="fc" id="L21">    public OrderItem(Product product, int quantity) {</span>
+<span class="fc" id="L22">        this.product = product;</span>
+<span class="fc" id="L23">        this.quantity = quantity;</span>
+<span class="fc" id="L24">    }</span>
+
+    public Product getProduct() {
+<span class="nc" id="L27">        return product;</span>
+    }
+
+    public void setProduct(Product product) {
+<span class="nc" id="L31">        this.product = product;</span>
+<span class="nc" id="L32">    }</span>
+
+    public int getQuantity() {
+<span class="nc" id="L35">        return quantity;</span>
+    }
+
+    public void setQuantity(int quantity) {
+<span class="nc" id="L39">        this.quantity = quantity;</span>
+<span class="nc" id="L40">    }</span>
+
+    /**
+     * Calculates the subtotal for this order item (price * quantity).
+     * Throws ValidationException if quantity &lt;= 0.
+     * Logs the calculation at DEBUG level.
+     */
+    public double getSubtotal() {
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (quantity &lt;= 0) {</span>
+<span class="fc" id="L50">            throw new ValidationException(&quot;Quantity must be greater than zero&quot;, &quot;quantity&quot;);</span>
+        }
+
+<span class="fc" id="L53">        double price = product.getPrice();</span>
+<span class="fc" id="L54">        double subtotal = price * quantity;</span>
+
+<span class="fc" id="L56">        logger.debug(&quot;Calculated subtotal for product {}: {} x {} = {}&quot;,</span>
+<span class="fc" id="L57">                product.getId(), price, quantity, subtotal);</span>
+
+<span class="fc" id="L59">        return subtotal;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L64">        return &quot;OrderItem{product=&quot; + product + &quot;, quantity=&quot; + quantity + &quot;}&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

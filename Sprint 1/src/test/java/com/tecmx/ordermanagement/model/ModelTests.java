@@ -17,51 +17,99 @@ class ModelTests {
     // =========================================================================
     // OrderItem.getSubtotal() tests
     // =========================================================================
+
     @Test
     @DisplayName("OrderItem.getSubtotal() should correctly calculate the subtotal")
     void orderItemSubtotalShouldBeCorrect() {
-        // TODO: Arrange - Create a Product with price=100.0 and an OrderItem with quantity=3.
-        // TODO: Act - Call getSubtotal().
-        // TODO: Assert - The result should be 300.0.
+
+        // Arrange
+        Product product = new Product("P1", "Laptop", 100.0, 10);
+        OrderItem item = new OrderItem(product, 3);
+
+        // Act
+        double subtotal = item.getSubtotal();
+
+        // Assert
+        assertEquals(300.0, subtotal);
     }
 
     @Test
     @DisplayName("OrderItem.getSubtotal() should throw ValidationException if quantity <= 0")
     void orderItemSubtotalShouldThrowWhenQuantityInvalid() {
-        // TODO: Implement
+
+        // Arrange
+        Product product = new Product("P1", "Laptop", 100.0, 10);
+        OrderItem item = new OrderItem(product, 0);
+
+        // Act + Assert
+        assertThrows(ValidationException.class, item::getSubtotal);
     }
 
     // =========================================================================
     // Order.getTotal() tests
     // =========================================================================
+
     @Test
     @DisplayName("Order.getTotal() should calculate the sum of all subtotals")
     void orderTotalShouldSumAllSubtotals() {
-        // TODO: Arrange - Create an order with 2 items:
-        //       Item 1: Product(price=50.0), quantity=2 → subtotal=100.0
-        //       Item 2: Product(price=30.0), quantity=3 → subtotal=90.0
-        // TODO: Act & Assert - getTotal() should return 190.0
+
+        // Arrange
+        Product p1 = new Product("P1", "Mouse", 50.0, 10);
+        Product p2 = new Product("P2", "Keyboard", 30.0, 10);
+
+        OrderItem item1 = new OrderItem(p1, 2); // 100
+        OrderItem item2 = new OrderItem(p2, 3); // 90
+
+        Order order = new Order("O1", "C1");
+        order.addItem(item1);
+        order.addItem(item2);
+
+        // Act
+        double total = order.getTotal();
+
+        // Assert
+        assertEquals(190.0, total);
     }
 
     @Test
     @DisplayName("Order.getTotal() should throw BusinessRuleException if it has no items")
     void orderTotalShouldThrowWhenNoItems() {
-        // TODO: Implement
+
+        // Arrange
+        Order order = new Order("O1", "C1");
+
+        // Act + Assert
+        assertThrows(BusinessRuleException.class, order::getTotal);
     }
 
     // =========================================================================
     // Constructor and getter/setter tests
     // =========================================================================
+
     @Test
     @DisplayName("Order should be created with CREATED status by default")
     void orderShouldHaveCreatedStatusByDefault() {
-        // TODO: Implement
+
+        // Arrange
+        Order order = new Order("O1", "C1");
+
+        // Assert
+        assertEquals(Order.Status.CREATED, order.getStatus());
+        assertNotNull(order.getCreatedAt());
+        assertTrue(order.getItems().isEmpty());
     }
 
     @Test
     @DisplayName("Product should correctly store all its fields")
     void productShouldStoreAllFields() {
-        // TODO: Implement - Create a Product with the full constructor
-        //       and verify each getter.
+
+        // Arrange
+        Product product = new Product("P1", "Laptop", 999.99, 5);
+
+        // Assert
+        assertEquals("P1", product.getId());
+        assertEquals("Laptop", product.getName());
+        assertEquals(999.99, product.getPrice());
+        assertEquals(5, product.getStockQuantity());
     }
 }
